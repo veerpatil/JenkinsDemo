@@ -2,6 +2,7 @@ package main.java;
 
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
@@ -9,11 +10,16 @@ import org.testng.*;
 import org.testng.xml.XmlSuite;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ExtentReport implements IReporter {
 
 
+    public static String report;
     public List<String > testClassName = new ArrayList<>();
     private ExtentReports extent;
     @Override
@@ -38,8 +44,9 @@ public class ExtentReport implements IReporter {
     private void init(String outputDirectory) {
         ExtentSparkReporter htmlReporter =
                 new ExtentSparkReporter (outputDirectory + File.separator
-                        + "Extent.html");
+                        + "Extent_"+getTimeStamp()+".html");
      //htmlReporter.config().setTheme(Theme.DARK);
+        report=  outputDirectory;
         extent = new ExtentReports();
         extent.attachReporter(htmlReporter);
         extent.setReportUsesManualConfiguration(true);
@@ -48,6 +55,11 @@ public class ExtentReport implements IReporter {
         extent.setSystemInfo("Machine Name" , "Home-Alone");
         extent.setSystemInfo("User Name:", "Veerkumar Patil");
 
+    }
+    String getTimeStamp() {
+        DateFormat format = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
+        String timeStamp = format.format(new Date());
+        return timeStamp;
     }
     private void buildTestNodes(IResultMap tests,
                                 Status status) {
@@ -62,8 +74,24 @@ public class ExtentReport implements IReporter {
                     test.log(Status.PASS,message);
                 }
                 if ( result.getThrowable() != null ) {
-                    test.log(status, result.getThrowable());
+                   // test.log(status, result.getThrowable());
+                    String screenshotPath= Paths.get("").toAbsolutePath().toString()+"/Screenshots/"+result.getName()+".png";
+                    File reportfile = new File(screenshotPath);
+
+                    try {
+                       String finalPath =  reportfile.getCanonicalPath().substring(2);
+                        System.out.println(reportfile.getCanonicalPath());
+                        System.out.println("Path:"+Paths.get("").toAbsolutePath().toString());
+                        //test.fail("Screenshot is below:" + MediaEntityBuilder.createScreenCaptureFromPath(Paths.get("").toAbsolutePath().toString()+screenshotPath).build());
+                        test.fail("Screenshot is as below:",  MediaEntityBuilder.createScreenCaptureFromPath(finalPath).build());
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.getStackTrace();
+                    }
+
                 }
+
                 else {
                     test.log(status,
                             "Test " +
