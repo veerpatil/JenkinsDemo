@@ -83,7 +83,7 @@ public class ExtentReport implements IReporter {
                         System.out.println(reportfile.getCanonicalPath());
                         System.out.println("Path:"+Paths.get("").toAbsolutePath().toString());
                         //test.fail("Screenshot is below:" + MediaEntityBuilder.createScreenCaptureFromPath(Paths.get("").toAbsolutePath().toString()+screenshotPath).build());
-                        test.fail("Screenshot is as below:",  MediaEntityBuilder.createScreenCaptureFromPath(finalPath).build());
+                        test.fail("Screenshot is as below:",  MediaEntityBuilder.createScreenCaptureFromPath(reportfile.getCanonicalPath()).build());
                     }
                     catch (Exception ex)
                     {
