@@ -10,6 +10,8 @@ import org.testng.*;
 import org.testng.xml.XmlSuite;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -61,8 +63,8 @@ public class ExtentReport implements IReporter {
         String timeStamp = format.format(new Date());
         return timeStamp;
     }
-    private void buildTestNodes(IResultMap tests,
-                                Status status) {
+    private void buildTestNodes(IResultMap tests, Status status) {
+
         ExtentTest test;
         if ( tests.size() > 0 ) {
             for ( ITestResult result : tests.getAllResults() ) {
@@ -74,16 +76,19 @@ public class ExtentReport implements IReporter {
                     test.log(Status.PASS,message);
                 }
                 if ( result.getThrowable() != null ) {
-                   // test.log(status, result.getThrowable());
-                    String screenshotPath= Paths.get("").toAbsolutePath().toString()+"/Screenshots/"+result.getName()+".png";
-                    File reportfile = new File(screenshotPath);
-
+                    test.log(status, result.getThrowable());
                     try {
-                       String finalPath =  reportfile.getCanonicalPath().substring(2);
-                        System.out.println(reportfile.getCanonicalPath());
-                        System.out.println("Path:"+Paths.get("").toAbsolutePath().toString());
-                        //test.fail("Screenshot is below:" + MediaEntityBuilder.createScreenCaptureFromPath(Paths.get("").toAbsolutePath().toString()+screenshotPath).build());
-                        test.fail("Screenshot is as below:",  MediaEntityBuilder.createScreenCaptureFromPath(reportfile.getCanonicalPath()).build());
+
+                        String finalPath;
+                        if(readProperties("env").equalsIgnoreCase("local"))
+                        {
+                            finalPath=Paths.get("").toAbsolutePath().toString()+ readProperties("localReportPath") + result.getName() + ".png";                        }
+                        else
+                        {
+                            finalPath = readProperties( "remoteReportPath")+result.getName()+".png" ;
+                        }
+
+                        test.fail("Screenshot is as below:",  MediaEntityBuilder.createScreenCaptureFromPath(finalPath).build());
                     }
                     catch (Exception ex)
                     {
@@ -114,5 +119,19 @@ public class ExtentReport implements IReporter {
         calendar.setTimeInMillis(millis);
         return calendar.getTime();
     }
+
+    public String readProperties(String name) throws IOException {
+        FileReader reader=new FileReader("test.properties");
+        Properties p=new Properties();
+        p.load(reader);
+//        System.out.println(p.get("env"));
+//        System.out.println(p.get("localReportPath"));
+//        System.out.println(p.get("remoteReportPath"));
+        p.getProperty(name);
+        return    p.getProperty(name);
+
+
+    }
+
 
 }
