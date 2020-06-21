@@ -117,7 +117,9 @@ public class SeleniumTest {
             TakesScreenshot ts = (TakesScreenshot) driver;
             File source = ts.getScreenshotAs(OutputType.FILE); // capture screenshot file
             System.out.println("Path:"+Paths.get("").toAbsolutePath().toString());
-            File target = new File(Paths.get("").toAbsolutePath().toString() + "/Screenshots/" + result.getName() + ".png");
+            File target = new File(Paths.get("").
+                    toAbsolutePath().toString() +
+                    "/Screenshots/" + result.getName() + ".png");
             FileUtils.copyFile(source,target);
             System.out.println("screenshot captured");
         }
