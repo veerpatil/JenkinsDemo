@@ -1,4 +1,5 @@
 package com.autoamtiononthego;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -61,7 +62,8 @@ public class SeleniumTest {
         }
         else if (browser.equalsIgnoreCase("localchrome"))
         {
-            System.setProperty("webdriver.chrome.driver", "C:\\webdrivers\\chromedrivernew.exe");
+            WebDriverManager.chromedriver().setup();
+         //   System.setProperty("webdriver.chrome.driver", "C:\\webdrivers\\chromedrivernew.exe");
             driver = new ChromeDriver();
             driver.manage().window().maximize();
         }

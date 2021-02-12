@@ -46,7 +46,7 @@ public class ExtentReport implements IReporter {
     private void init(String outputDirectory) {
         ExtentSparkReporter htmlReporter =
                 new ExtentSparkReporter (outputDirectory + File.separator
-                        + "Extent_"+getTimeStamp()+".html");
+                        + "Extent.html");
      //htmlReporter.config().setTheme(Theme.DARK);
         report=  outputDirectory;
         extent = new ExtentReports();
